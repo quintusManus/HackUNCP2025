@@ -138,6 +138,28 @@ form div {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Fix for unwanted text boxes */
+.question-container input[type="text"],
+.quiz-question input[type="text"],
+form div > p + input[type="text"],
+form div > div + input[type="text"],
+.question input[type="text"],
+form div:not(.text-input-required) input[type="text"] {
+  display: none;
+}
+
+/* Only show text inputs where explicitly needed */
+.text-input-required input[type="text"] {
+  display: block;
+}
+
+/* Apply display:none to any textarea that follows a question or option */
+form div textarea,
+.question textarea,
+.quiz-question textarea {
+  display: none;
+}
+
 /* Vocabulary quiz specific styling */
 .vocabulary-quiz .quiz-item,
 .vocab-list .vocab-item {
