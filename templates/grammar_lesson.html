@@ -1,15 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Grammar Lesson</h2>
-<p>{{ lesson }}</p>
+<div class="grammar-lesson">
+  <h2>Grammar Lesson</h2>
+  <div id="lesson-content">
+    {{ lesson|safe }}
+  </div>
+</div>
+
 <h3>Grammar Quiz</h3>
 <form method="POST" action="/grammar_lesson">
   {% for block in question_blocks %}
-    <div>
+    <div class="quiz-question">
       <label>{{ block|safe }}</label><br>
       <input type="text" name="answer" required><br><br>
     </div>
   {% endfor %}
   <button type="submit">Submit Grammar Quiz Answers</button>
 </form>
+
+<script>
+  // Fix HTML rendering issues by properly inserting the content
+  document.addEventListener('DOMContentLoaded', function() {
+    var lessonContent = document.getElementById('lesson-content');
+    // Remove any # signs that might be causing issues
+    var content = lessonContent.innerHTML;
+    content = content.replace(/#/g, '');
+    // Fix any double tags that might be causing issues
+    content = content.replace(/<\/([a-z0-9]+)><br><br><\1>/gi, '<br>');
+    lessonContent.innerHTML = content;
+  });
+</script>
 {% endblock %}
