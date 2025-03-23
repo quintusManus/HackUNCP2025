@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Vocabulary Quiz</h2>
+<p>Please answer the following vocabulary questions:</p>
+<form method="POST" action="/vocab_quiz">
+  {% for line in questions.splitlines() %}
+    {% if line.strip() %}
+      <div>
+        <label>{{ line }}</label><br>
+        <input type="text" name="answer" required>
+      </div>
+    {% endif %}
+  {% endfor %}
+  <button type="submit">Submit Vocabulary Answers</button>
+</form>
+{% endblock %}

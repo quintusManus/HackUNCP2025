@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2>Welcome</h2>
+<form method="POST" action="/">
+  <div>
+    <label for="native_language">Native Language:</label>
+    <input type="text" name="native_language" required>
+  </div>
+  <div>
+    <label for="target_language">Target Language:</label>
+    <input type="text" name="target_language" required>
+  </div>
+  <div>
+    <label for="user_speech">Your Speech (What you want to say):</label>
+    <textarea name="user_speech" required></textarea>
+  </div>
+  <button type="submit">Start Preliminary Test</button>
+</form>
+{% endblock %}
