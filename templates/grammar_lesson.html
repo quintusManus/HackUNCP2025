@@ -4,13 +4,11 @@
 <p>{{ lesson }}</p>
 <h3>Grammar Quiz</h3>
 <form method="POST" action="/grammar_lesson">
-  {% for line in quiz_questions.splitlines() %}
-    {% if line.strip() %}
-      <div>
-        <label>{{ line }}</label><br>
-        <input type="text" name="answer" required>
-      </div>
-    {% endif %}
+  {% for block in question_blocks %}
+    <div>
+      <label>{{ block|safe }}</label><br>
+      <input type="text" name="answer" required><br><br>
+    </div>
   {% endfor %}
   <button type="submit">Submit Grammar Quiz Answers</button>
 </form>

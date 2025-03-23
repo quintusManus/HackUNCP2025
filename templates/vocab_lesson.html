@@ -1,8 +1,11 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Vocabulary Quiz</h2>
-<p>Please answer the following vocabulary questions:</p>
-<form method="POST" action="/vocab_quiz">
+<h2>Vocabulary Lesson</h2>
+<p>Review the following vocabulary list:</p>
+<pre>{{ vocab_list }}</pre>
+<hr>
+<p>Now, answer the following vocabulary quiz questions:</p>
+<form method="POST" action="/vocab_lesson">
   {% for block in question_blocks %}
     <div>
       <label>{{ block|safe }}</label><br>

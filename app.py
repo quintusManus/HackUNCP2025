@@ -1,192 +1,208 @@
 import os
-import openai
 from flask import Flask, render_template, request, redirect, url_for, session
+from dotenv import load_dotenv
+from pathlib import Path
+from openai import OpenAI
+
+# Load .env file
+load_dotenv(dotenv_path=Path(".env"))
+
+# Initialize the OpenAI client with the API key from your .env file.
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Replace with a secure key
+app.secret_key = os.getenv("FLASK_SECRET_KEY")
 
-# Make sure to set the OPENAI_API_KEY environment variable before running
-openai.api_key = os.getenv("OPENAI_API_KEY")
 
 def call_chatgpt(prompt):
     """
-    Calls the ChatGPT API with the provided prompt and returns the generated text.
+    Calls the ChatGPT API with the provided prompt using the correct interface,
+    and returns the generated text.
     """
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
+        response = client.chat.completions.create(
+            model="gpt-4o",
             messages=[{"role": "system", "content": prompt}],
             temperature=0.7,
             max_tokens=500
         )
-        return response.choices[0].message.content.strip()
+        output = response.choices[0].message.content.strip()
+        print("GPT Output:\n", output)  # Debug output
+        return output
     except Exception as e:
-        return f"Error: {str(e)}"
+        error_text = f"Error: {str(e)}"
+        print("GPT Error:", error_text)
+        return error_text
 
-@app.route('/', methods=['GET', 'POST'])
+
+@app.route("/", methods=["GET", "POST"])
 def index():
-    """
-    Landing page: collects the user’s native language, target language,
-    and a sample of what they would like to say.
-    """
-    if request.method == 'POST':
-        session['native_language'] = request.form['native_language']
-        session['target_language'] = request.form['target_language']
-        session['user_speech'] = request.form['user_speech']
-        return redirect(url_for('prelim_test'))
-    return render_template('index.html')
+    if request.method == "POST":
+        session["native_language"] = request.form["native_language"]
+        session["target_language"] = request.form["target_language"]
+        return redirect(url_for("prelim_test"))
+    return render_template("index.html")
 
-@app.route('/prelim_test', methods=['GET', 'POST'])
+
+@app.route("/prelim_test", methods=["GET", "POST"])
 def prelim_test():
-    """
-    Preliminary test:
-    - GET: Generate test questions using ChatGPT.
-    - POST: Receive user answers and generate a competency analysis.
-    """
-    if request.method == 'POST':
-        # Capture the user's answers from the preliminary test
-        session['prelim_answers'] = request.form.getlist('answer')
-        session['prelim_questions'] = session.get('prelim_questions', '')
-        # Generate competency analysis based on the questions and answers
-        prompt = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the following questions and answers from a language test, provide a comprehensive analysis of their level of competency in the target language.
+    if request.method == "POST":
+        session["prelim_answers"] = request.form.getlist("answer")
+        # Assess the user's performance on the preliminary test.
+        prompt = f"""You are a language teacher. The user's target language is {session['target_language']} and their native language is {session['native_language']}.
+Based on the following questions and the user's answers, please assess their current language competency.
 
 Questions:
 {session['prelim_questions']}
 
 Answers:
-{session['prelim_answers']}
-
-Return user_language_competency = [AI generated competency description]"""
+{session['prelim_answers']}"""
         analysis = call_chatgpt(prompt)
-        session['user_competency'] = analysis
-        return redirect(url_for('vocab_quiz'))
-    else:
-        # Generate preliminary test questions based on the user's speech and target language.
-        prompt = f"""Preliminary test method:
-The user speaks: "{session.get('user_speech', '')}" and their target language is {session['target_language']}.
-Generate a language comprehension test based on this. Only respond with the questions you’ve made.
-Prelim_test_questions = [AI generated questions]"""
-        prelim_questions = call_chatgpt(prompt)
-        session['prelim_questions'] = prelim_questions
-        return render_template('prelim_test.html', questions=prelim_questions)
+        session["user_competency"] = analysis
+        return redirect(url_for("next_lesson"))
 
-@app.route('/vocab_quiz', methods=['GET', 'POST'])
-def vocab_quiz():
-    """
-    Vocabulary section:
-    - GET: Generate a vocabulary list (with translations) based on the user’s competency,
-           then generate a quiz using that vocab.
-    - POST: Receive the user's quiz answers and generate a vocab summary.
-    """
-    if request.method == 'POST':
-        # Process the user's vocabulary quiz answers
-        session['vocab_quiz_answers'] = request.form.getlist('answer')
-        prompt = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the following vocab quiz questions and user answers, generate a summary of what they need to work on and what they did well with vocabulary.
+    # Generate preliminary test questions (GET request)
+    prompt = f"""
+You are a language tutor. Please generate a preliminary test for a beginner learning {session['target_language']} whose native language is {session['native_language']}.
+The test should include 3 to 5 multiple choice questions covering basic vocabulary, reading comprehension, and grammar.
+Each question should be formatted as a separate block (separated by a blank line) in the following format:
+
+1. [Question text]
+a) [Option A]
+b) [Option B]
+c) [Option C]
+
+Return only the questions and answer choices.
+"""
+    prelim_questions = call_chatgpt(prompt)
+    print("Prelim Questions Raw:\n", prelim_questions)
+    if not prelim_questions.strip() or "Error:" in prelim_questions:
+        prelim_questions = """1. What does 'hello' mean in your target language?
+a) Option A
+b) Option B
+c) Option C"""
+    session["prelim_questions"] = prelim_questions
+    question_blocks = prelim_questions.split("\n\n")
+    return render_template("prelim_test.html", question_blocks=question_blocks)
+
+
+@app.route("/vocab_lesson", methods=["GET", "POST"])
+def vocab_lesson():
+    if request.method == "POST":
+        session["vocab_quiz_answers"] = request.form.getlist("answer")
+        # Assess vocabulary performance.
+        prompt = f"""You are a language teacher. The user's target language is {session['target_language']} and their native language is {session['native_language']}.
+Based on the following vocabulary quiz questions and the user's answers, summarize their vocabulary strengths and weaknesses.
 
 Questions:
 {session.get('vocab_quiz_questions', '')}
 
 Answers:
-{session['vocab_quiz_answers']}
-
-Vocab_summary = [AI summary of what the user did good and bad in the vocab section]"""
+{session['vocab_quiz_answers']}"""
         vocab_summary = call_chatgpt(prompt)
-        session['vocab_summary'] = vocab_summary
-        return redirect(url_for('grammar_lesson'))
-    else:
-        # Generate the vocab list and then the vocabulary quiz questions
-        prompt_vocab = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the language learner’s level:
+        session["vocab_summary"] = vocab_summary
+        return redirect(url_for("grammar_lesson"))
+
+    # Incorporate the next lesson plan into the vocab lesson prompt if available.
+    next_lesson_plan = session.get("next_lesson_plan", "")
+    prompt_vocab = f"""Based on this language competency level in {session['target_language']}:
 {session['user_competency']}
 
-Generate vocabulary in the target language along with translations for learning purposes.
-Vocab = [AI generated vocab list with translations in their target language]"""
-        vocab_list = call_chatgpt(prompt_vocab)
-        session['vocab_list'] = vocab_list
+And considering the following next lesson plan:
+{next_lesson_plan}
 
-        prompt_quiz = f"""Based on the following vocabulary list, generate a quiz with only the vocab in {session['target_language']}. Say nothing else.
-Vocab_quiz_questions = [AI generated questions]
+Generate a vocabulary list with translations that the student should study to improve their skills."""
+    vocab_list = call_chatgpt(prompt_vocab)
+    session["vocab_list"] = vocab_list
 
-Vocabulary list:
+    prompt_quiz = f"""Create a vocabulary quiz in {session['target_language']} using the following vocabulary list.
+Only output the questions and answer choices.
+
 {vocab_list}"""
-        vocab_quiz_questions = call_chatgpt(prompt_quiz)
-        session['vocab_quiz_questions'] = vocab_quiz_questions
-        return render_template('vocab_quiz.html', questions=vocab_quiz_questions)
+    vocab_quiz_questions = call_chatgpt(prompt_quiz)
+    session["vocab_quiz_questions"] = vocab_quiz_questions
 
-@app.route('/grammar_lesson', methods=['GET', 'POST'])
+    question_blocks = vocab_quiz_questions.split("\n\n")
+    return render_template("vocab_lesson.html", vocab_list=vocab_list, question_blocks=question_blocks)
+
+
+@app.route("/grammar_lesson", methods=["GET", "POST"])
 def grammar_lesson():
-    """
-    Grammar section:
-    - GET: Generate a short grammar lesson and corresponding quiz questions.
-    - POST: Receive grammar quiz answers and generate a summary.
-    """
-    if request.method == 'POST':
-        session['grammar_quiz_answers'] = request.form.getlist('answer')
-        prompt = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the following grammar quiz questions and user answers, generate a summary of what they need to work on and what they did well in grammar.
+    if request.method == "POST":
+        session["grammar_quiz_answers"] = request.form.getlist("answer")
+        prompt = f"""You are a language teacher. The user's target language is {session['target_language']} and their native language is {session['native_language']}.
+Review the following grammar quiz questions and the user's answers, and summarize their strengths and areas for improvement.
 
 Questions:
 {session.get('grammar_quiz_questions', '')}
 
 Answers:
-{session['grammar_quiz_answers']}
-
-grammar_summary = [AI summary of what the user did good and bad in the grammar section]"""
+{session['grammar_quiz_answers']}"""
         grammar_summary = call_chatgpt(prompt)
-        session['grammar_summary'] = grammar_summary
-        return redirect(url_for('overall_summary'))
-    else:
-        prompt_lesson = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the language learner’s level:
+        session["grammar_summary"] = grammar_summary
+        return redirect(url_for("overall_summary"))
+
+    # Incorporate the next lesson plan into the grammar lesson prompt if available.
+    next_lesson_plan = session.get("next_lesson_plan", "")
+    prompt_lesson = f"""Based on the user's language competency in {session['target_language']}:
 {session['user_competency']}
 
-Generate a short grammar lesson that the user can understand.
-grammar_lesson = [AI generated grammar lesson]"""
-        grammar_lesson_text = call_chatgpt(prompt_lesson)
-        session['grammar_lesson'] = grammar_lesson_text
+And considering the following next lesson plan:
+{next_lesson_plan}
 
-        prompt_quiz = f"""Based on the following grammar lesson, generate a grammar quiz for the user numbered for the questions. Only generate the questions.
-lesson:
-{grammar_lesson_text}
+Generate a short, easy-to-understand grammar lesson."""
+    grammar_lesson_text = call_chatgpt(prompt_lesson)
+    session["grammar_lesson"] = grammar_lesson_text
 
-grammar_quiz_questions = [AI generated questions]"""
-        grammar_quiz_questions = call_chatgpt(prompt_quiz)
-        session['grammar_quiz_questions'] = grammar_quiz_questions
-        return render_template('grammar_lesson.html', lesson=grammar_lesson_text, quiz_questions=grammar_quiz_questions)
+    prompt_quiz = f"""Create a grammar quiz (with numbered questions only) based on the following lesson.
+Only output the questions and answer choices.
 
-@app.route('/overall_summary', methods=['GET'])
+{grammar_lesson_text}"""
+    grammar_quiz_questions = call_chatgpt(prompt_quiz)
+    session["grammar_quiz_questions"] = grammar_quiz_questions
+
+    question_blocks = grammar_quiz_questions.split("\n\n")
+    return render_template("grammar_lesson.html", lesson=grammar_lesson_text, question_blocks=question_blocks)
+
+
+@app.route("/overall_summary", methods=["GET"])
 def overall_summary():
-    """
-    Overall summary:
-    Generate an overall competency analysis using the preliminary test, vocabulary summary,
-    and grammar summary.
-    """
-    prompt = f"""You are a language teacher. The user’s target language is {session['target_language']} and their native language is {session['native_language']}.
-Based on the user’s previously recorded competency in the language, and summaries of their grammar and vocabulary, generate a new detailed analysis of their competency in the target language.
+    prompt = f"""Summarize the user's overall language competency in {session['target_language']} based on the following:
 
-Previously recorded competency:
+1. Initial competency assessment:
 {session['user_competency']}
 
-Vocabulary summary:
+2. Vocabulary summary:
 {session['vocab_summary']}
 
-Grammar summary:
-{session['grammar_summary']}
-
-User_language_competency = [AI generated text based on the above summaries]"""
+3. Grammar summary:
+{session['grammar_summary']}"""
     overall = call_chatgpt(prompt)
-    session['overall_summary'] = overall
-    return render_template('overall_summary.html', overall=overall)
+    session["overall_summary"] = overall
+    return render_template("overall_summary.html", overall=overall)
 
-@app.route('/next_lesson', methods=['GET'])
+
+# Next Lesson route: Generate a next lesson plan based on the overall summary,
+# but do not display it. Instead, store it and then redirect to the vocab lesson.
+@app.route("/next_lesson", methods=["GET"])
 def next_lesson():
-    """
-    Starts the next lesson.
-    For subsequent lessons, skip the preliminary test and start with the vocabulary and grammar sections.
-    """
-    return redirect(url_for('vocab_quiz'))
+    overall_summary = session.get("overall_summary", "No summary available.")
+    prompt = f"""
+You are a language teacher. Based on the following overall competency summary for the student:
+{overall_summary}
 
-if __name__ == '__main__':
+Generate a detailed next lesson plan that specifically targets the areas needing improvement.
+The lesson plan should include:
+- Lesson objectives
+- A brief review of the areas of weakness
+- Tailored exercises (e.g., grammar, vocabulary, or comprehension tasks)
+Return only the lesson plan text.
+"""
+    next_lesson_plan = call_chatgpt(prompt)
+    session["next_lesson_plan"] = next_lesson_plan
+    # Instead of showing the lesson plan, redirect to the vocabulary lesson for the next cycle.
+    return redirect(url_for("vocab_lesson"))
+
+
+if __name__ == "__main__":
     app.run(debug=True)

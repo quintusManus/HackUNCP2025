@@ -3,13 +3,11 @@
 <h2>Preliminary Test Questions</h2>
 <p>Please answer the following questions:</p>
 <form method="POST" action="/prelim_test">
-  {% for line in questions.splitlines() %}
-    {% if line.strip() %}
-      <div>
-        <label>{{ line }}</label><br>
-        <input type="text" name="answer" required>
-      </div>
-    {% endif %}
+  {% for block in question_blocks %}
+    <div>
+      <label>{{ block|safe }}</label><br>
+      <input type="text" name="answer" required><br><br>
+    </div>
   {% endfor %}
   <button type="submit">Submit Answers</button>
 </form>
