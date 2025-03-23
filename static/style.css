@@ -1,131 +1,231 @@
 :root {
-  --primary-color: #4a6fa5;
-  --secondary-color: #166088;
-  --accent-color: #4ec5c1;
-  --light-color: #f5f7fa;
-  --dark-color: #333333;
-  --border-radius: 6px;
-  --box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  /* TimeAI theme colors */
+  --timeai-blue: #1abc9c;
+  --timeai-blue-glow: rgba(26, 188, 156, 0.5);
+  --timeai-dark: #34495e;
+  --timeai-darker: #22313f;
+  --timeai-light: #ecf0f1;
+  --timeai-silver: #bdc3c7;
+  --timeai-accent: #e74c3c;
+  --timeai-success: #2ecc71;
+  --timeai-error: #e74c3c;
+  --timeai-warning: #f1c40f;
+  --timeai-gradient: linear-gradient(135deg, #1abc9c 0%, #34495e 100%);
+  --timeai-gradient-hover: linear-gradient(135deg, #16a085 0%, #34495e 100%);
+  
+  /* Legacy variables mapped to TimeAI */
+  --primary-color: var(--timeai-blue);
+  --secondary-color: var(--timeai-dark);
+  --accent-color: var(--timeai-accent);
+  --light-color: var(--timeai-light);
+  --dark-color: var(--timeai-darker);
+  --border-radius: 10px;
+  --box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Segoe UI', 'Roboto', sans-serif;
   line-height: 1.6;
-  color: var(--dark-color);
-  background-color: #f9f9f9;
+  color: var(--timeai-light);
+  background-color: var(--timeai-darker);
   margin: 0;
-  padding: 0;
+  padding: 20px;
+  min-height: 100vh;
+  background-image:
+    radial-gradient(circle at 25% 25%, rgba(0, 198, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(0, 198, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(to bottom, var(--timeai-darker), var(--timeai-dark));
 }
 
 .container {
   max-width: 800px;
   margin: 2rem auto;
-  padding: 2rem;
-  background-color: white;
-  border-radius: var(--border-radius);
+  background: var(--timeai-dark);
+  border-radius: 15px;
   box-shadow: var(--box-shadow);
+  overflow: hidden;
+  padding: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  position: relative;
+}
+
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M10 10L90 10M10 50L90 50M10 90L90 90M50 10L50 90' stroke='rgba(255,255,255,0.03)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
 }
 
 h1 {
-  color: var(--primary-color);
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--timeai-light);
   text-align: center;
   margin-top: 0;
   margin-bottom: 1.5rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--accent-color);
+  padding-bottom: 15px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  letter-spacing: 0.5px;
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 2px;
+  background: var(--timeai-gradient);
+  border-radius: 2px;
+  box-shadow: 0 0 10px var(--timeai-blue-glow);
 }
 
 h2 {
-  color: var(--secondary-color);
-  margin-top: 0;
-  margin-bottom: 1.2rem;
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: var(--timeai-blue);
+  position: relative;
+  display: inline-block;
+  text-shadow: 0 0 10px rgba(0, 198, 255, 0.3);
 }
 
 h3 {
-  color: var(--secondary-color);
+  font-size: 1.4rem;
+  color: var(--timeai-blue);
   margin-top: 1.5rem;
   margin-bottom: 1rem;
+  font-weight: 600;
 }
 
 form {
-  background-color: var(--light-color);
+  background-color: rgba(255, 255, 255, 0.05);
   padding: 1.5rem;
   border-radius: var(--border-radius);
   margin-bottom: 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 label {
   font-weight: 600;
   display: block;
   margin-bottom: 0.5rem;
-  color: var(--secondary-color);
+  color: var(--timeai-light);
 }
 
 input[type="text"], textarea {
   width: 100%;
-  padding: 10px 12px;
+  padding: 12px 15px;
   margin-bottom: 1.2rem;
-  border: 1px solid #ccc;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--border-radius);
+  background: var(--timeai-darker);
+  color: var(--timeai-light);
   font-size: 1rem;
-  transition: border-color 0.3s, box-shadow 0.3s;
+  transition: all 0.3s ease;
 }
 
 input[type="text"]:focus, textarea:focus {
   outline: none;
-  border-color: var(--accent-color);
-  box-shadow: 0 0 0 3px rgba(78, 197, 193, 0.2);
+  border-color: var(--timeai-blue);
+  box-shadow: 0 0 0 3px var(--timeai-blue-glow);
 }
 
 button {
-  background-color: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: var(--border-radius);
-  cursor: pointer;
-  font-size: 1rem;
+  padding: 12px 24px;
+  border-radius: 30px;
   font-weight: 600;
-  transition: background-color 0.3s;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 16px;
+  border: none;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  background: var(--timeai-gradient);
+  color: white;
+  box-shadow: 0 4px 15px rgba(0, 198, 255, 0.3);
+}
+
+button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: all 0.6s ease;
+}
+
+button:hover::before {
+  left: 100%;
 }
 
 button:hover {
-  background-color: var(--secondary-color);
+  background: var(--timeai-gradient-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 198, 255, 0.4);
 }
 
 pre {
-  background-color: var(--light-color);
+  background-color: var(--timeai-darker);
   padding: 1rem;
   border-radius: var(--border-radius);
-  border-left: 4px solid var(--accent-color);
+  border-left: 4px solid var(--timeai-blue);
   overflow-x: auto;
   margin: 1rem 0;
   font-family: 'Courier New', Courier, monospace;
   font-size: 0.9rem;
   line-height: 1.5;
+  color: var(--timeai-light);
 }
 
 a {
-  color: var(--secondary-color);
+  color: var(--timeai-blue);
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.3s;
+  transition: all 0.3s ease;
   display: inline-block;
   margin-top: 1rem;
-  padding: 8px 16px;
-  border-radius: var(--border-radius);
-  background-color: var(--light-color);
+  padding: 10px 20px;
+  border-radius: 30px;
+  background-color: transparent;
+  border: 2px solid rgba(0, 198, 255, 0.5);
 }
 
 a:hover {
-  color: var(--primary-color);
-  background-color: #e8eef7;
+  background-color: rgba(0, 198, 255, 0.1);
+  border-color: var(--timeai-blue);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 hr {
   border: none;
   height: 1px;
-  background-color: #ddd;
+  background-color: rgba(255, 255, 255, 0.1);
   margin: 2rem 0;
 }
 
@@ -133,9 +233,10 @@ hr {
 form div {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 /* Vocabulary quiz specific styling */
@@ -152,9 +253,9 @@ form div {
 
 .vocabulary-quiz label,
 .vocab-list label {
-  display: block;S
-  padding: 10px;
-  background-color: var(--light-color);
+  display: block;
+  padding: 12px;
+  background-color: rgba(255, 255, 255, 0.05);
   border-radius: var(--border-radius);
   margin-bottom: 0.5rem;
 }
@@ -173,43 +274,55 @@ form div {
 
 /* Read-only content styling */
 .read-only-content {
-  background-color: var(--light-color);
+  background-color: var(--timeai-darker);
   padding: 1rem;
   border-radius: var(--border-radius);
   margin-bottom: 1rem;
-  border-left: 3px solid var(--accent-color);
+  border-left: 3px solid var(--timeai-blue);
 }
 
 /* Grammar Lesson Styling - Professional Edition */
 .grammar-lesson {
-  background-color: white;
+  background-color: rgba(255, 255, 255, 0.02);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: 2rem;
   margin-bottom: 2rem;
-  border-top: 5px solid var(--primary-color);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.grammar-lesson::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 5px;
+  background: var(--timeai-gradient);
 }
 
 .grammar-lesson h2 {
-  color: var(--primary-color);
+  color: var(--timeai-blue);
   font-size: 1.8rem;
   margin-bottom: 1.2rem;
   padding-bottom: 0.8rem;
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .grammar-lesson h3 {
-  color: var(--secondary-color);
+  color: var(--timeai-blue);
   font-size: 1.4rem;
   margin-top: 1.8rem;
   margin-bottom: 1rem;
   padding-left: 0.8rem;
-  border-left: 4px solid var(--accent-color);
+  border-left: 4px solid var(--timeai-blue);
 }
 
 .grammar-rule {
-  background-color: #f0f7fa;
-  border-left: 4px solid var(--secondary-color);
+  background-color: rgba(26, 188, 156, 0.1);
+  border-left: 4px solid var(--timeai-blue);
   padding: 1.2rem;
   margin: 1.5rem 0;
   border-radius: 0 var(--border-radius) var(--border-radius) 0;
@@ -221,7 +334,7 @@ form div {
   position: absolute;
   top: -12px;
   left: 10px;
-  background-color: var(--secondary-color);
+  background-color: var(--timeai-blue);
   color: white;
   font-size: 0.8rem;
   padding: 3px 10px;
@@ -230,8 +343,8 @@ form div {
 }
 
 .example {
-  background-color: #f5f9f2;
-  border: 1px dashed #acd0a5;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px dashed rgba(26, 188, 156, 0.3);
   padding: 1rem 1.5rem;
   margin: 1.2rem 0;
   border-radius: var(--border-radius);
@@ -239,34 +352,34 @@ form div {
 }
 
 .example-correct {
-  color: #2c7f3c;
+  color: var(--timeai-success);
   font-weight: 600;
   margin-right: 5px;
 }
 
 .example-incorrect {
-  color: #d32f2f;
+  color: var(--timeai-error);
   text-decoration: line-through;
   margin-right: 5px;
 }
 
 .grammar-note {
-  background-color: #fff8e1;
-  border-left: 4px solid #ffc107;
+  background-color: rgba(241, 196, 15, 0.1);
+  border-left: 4px solid var(--timeai-warning);
   padding: 1rem;
   margin: 1.2rem 0;
-  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  border-radius: 0 var(--border-radius) var (--border-radius) 0;
 }
 
 .grammar-table {
   width: 100%;
   border-collapse: collapse;
   margin: 1.5rem 0;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  box-shadow: var(--box-shadow);
 }
 
 .grammar-table th {
-  background-color: var(--primary-color);
+  background-color: var(--timeai-blue);
   color: white;
   padding: 12px 15px;
   text-align: left;
@@ -274,25 +387,25 @@ form div {
 
 .grammar-table td {
   padding: 10px 15px;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .grammar-table tr:nth-child(even) {
-  background-color: #f5f7fa;
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .grammar-highlight {
-  background-color: #e8f4f8;
+  background-color: rgba(26, 188, 156, 0.2);
   padding: 2px 5px;
   border-radius: 3px;
   font-weight: 600;
-  color: var(--secondary-color);
+  color: var(--timeai-light);
 }
 
 .grammar-section {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .grammar-section:last-child {
@@ -302,19 +415,39 @@ form div {
 
 /* Practice exercises styling */
 .practice-exercises {
-  background-color: #f0f5ff;
+  background-color: rgba(26, 188, 156, 0.1);
   border-radius: var(--border-radius);
   padding: 1.5rem;
   margin: 2rem 0;
-  border: 1px solid #d1e0ff;
+  border: 1px solid rgba(26, 188, 156, 0.2);
 }
 
 .practice-exercises h3 {
-  color: #3f51b5;
+  color: var(--timeai-blue);
   margin-top: 0;
-  border-bottom: 2px solid #d1e0ff;
+  border-bottom: 1px solid rgba(26, 188, 156, 0.2);
   padding-bottom: 0.8rem;
   margin-bottom: 1.2rem;
+}
+
+/* Progress bar */
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  margin-bottom: 30px;
+  overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.progress-fill {
+  height: 100%;
+  background: var(--timeai-gradient);
+  width: 0%;
+  transition: width 0.3s ease;
+  border-radius: 20px;
+  box-shadow: 0 0 10px var(--timeai-blue-glow);
 }
 
 /* Mobile responsiveness for grammar sections */
@@ -327,10 +460,7 @@ form div {
     display: block;
     overflow-x: auto;
   }
-}
-
-/* Mobile responsiveness */
-@media (max-width: 768px) {
+  
   .container {
     padding: 1rem;
     margin: 1rem;
