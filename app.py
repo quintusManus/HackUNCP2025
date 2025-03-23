@@ -21,7 +21,7 @@ def call_chatgpt(prompt):
     """
     try:
         response = client.chat.completions.create(
-            model="gpt-4o",
+            model="gpt-4o-mini",
             messages=[{"role": "system", "content": prompt}],
             temperature=0.7,
             max_tokens=500
@@ -165,21 +165,17 @@ Only output the questions and answer choices.
     return render_template("grammar_lesson.html", lesson=grammar_lesson_text, question_blocks=question_blocks)
 
 
-@app.route("/overall_summary", methods=["GET"])
+@app.route('/overall_summary')
 def overall_summary():
-    prompt = f"""Summarize the user's overall language competency in {session['target_language']} based on the following:
-
-1. Initial competency assessment:
-{session['user_competency']}
-
-2. Vocabulary summary:
-{session['vocab_summary']}
-
-3. Grammar summary:
-{session['grammar_summary']}"""
-    overall = call_chatgpt(prompt)
-    session["overall_summary"] = overall
-    return render_template("overall_summary.html", overall=overall)
+    # Fix for KeyError: 'vocab_summary'
+    vocab_summary = session.get('vocab_summary', 'No vocabulary summary available yet.')
+    grammar_summary = session.get('grammar_summary', 'No grammar summary available yet.')
+    quiz_results = session.get('quiz_results', 'No quiz results available yet.')
+    
+    return render_template('overall_summary.html', 
+                          vocab_summary=vocab_summary,
+                          grammar_summary=grammar_summary,
+                          quiz_results=quiz_results)
 
 
 # Next Lesson route: Generate a next lesson plan based on the overall summary,

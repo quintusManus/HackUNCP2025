@@ -138,6 +138,197 @@ form div {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
+/* Vocabulary quiz specific styling */
+.vocabulary-quiz .quiz-item,
+.vocab-list .vocab-item {
+  display: block;
+  margin-bottom: 1rem;
+}
+
+.vocabulary-quiz input[type="text"],
+.vocab-list input[type="text"] {
+  display: none; /* Hide text inputs in vocabulary sections */
+}
+
+.vocabulary-quiz label,
+.vocab-list label {
+  display: block;S
+  padding: 10px;
+  background-color: var(--light-color);
+  border-radius: var(--border-radius);
+  margin-bottom: 0.5rem;
+}
+
+/* Multiple choice styling */
+.multiple-choice-option {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.multiple-choice-option input[type="radio"],
+.multiple-choice-option input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Read-only content styling */
+.read-only-content {
+  background-color: var(--light-color);
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  margin-bottom: 1rem;
+  border-left: 3px solid var(--accent-color);
+}
+
+/* Grammar Lesson Styling - Professional Edition */
+.grammar-lesson {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-top: 5px solid var(--primary-color);
+}
+
+.grammar-lesson h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 1.2rem;
+  padding-bottom: 0.8rem;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+.grammar-lesson h3 {
+  color: var(--secondary-color);
+  font-size: 1.4rem;
+  margin-top: 1.8rem;
+  margin-bottom: 1rem;
+  padding-left: 0.8rem;
+  border-left: 4px solid var(--accent-color);
+}
+
+.grammar-rule {
+  background-color: #f0f7fa;
+  border-left: 4px solid var(--secondary-color);
+  padding: 1.2rem;
+  margin: 1.5rem 0;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+  position: relative;
+}
+
+.grammar-rule::before {
+  content: "Rule";
+  position: absolute;
+  top: -12px;
+  left: 10px;
+  background-color: var(--secondary-color);
+  color: white;
+  font-size: 0.8rem;
+  padding: 3px 10px;
+  border-radius: 3px;
+  font-weight: bold;
+}
+
+.example {
+  background-color: #f5f9f2;
+  border: 1px dashed #acd0a5;
+  padding: 1rem 1.5rem;
+  margin: 1.2rem 0;
+  border-radius: var(--border-radius);
+  font-style: italic;
+}
+
+.example-correct {
+  color: #2c7f3c;
+  font-weight: 600;
+  margin-right: 5px;
+}
+
+.example-incorrect {
+  color: #d32f2f;
+  text-decoration: line-through;
+  margin-right: 5px;
+}
+
+.grammar-note {
+  background-color: #fff8e1;
+  border-left: 4px solid #ffc107;
+  padding: 1rem;
+  margin: 1.2rem 0;
+  border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.grammar-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.grammar-table th {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px 15px;
+  text-align: left;
+}
+
+.grammar-table td {
+  padding: 10px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+.grammar-table tr:nth-child(even) {
+  background-color: #f5f7fa;
+}
+
+.grammar-highlight {
+  background-color: #e8f4f8;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-weight: 600;
+  color: var(--secondary-color);
+}
+
+.grammar-section {
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.grammar-section:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Practice exercises styling */
+.practice-exercises {
+  background-color: #f0f5ff;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin: 2rem 0;
+  border: 1px solid #d1e0ff;
+}
+
+.practice-exercises h3 {
+  color: #3f51b5;
+  margin-top: 0;
+  border-bottom: 2px solid #d1e0ff;
+  padding-bottom: 0.8rem;
+  margin-bottom: 1.2rem;
+}
+
+/* Mobile responsiveness for grammar sections */
+@media (max-width: 768px) {
+  .grammar-lesson {
+    padding: 1.2rem;
+  }
+  
+  .grammar-table {
+    display: block;
+    overflow-x: auto;
+  }
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .container {
