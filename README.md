@@ -1,4 +1,4 @@
-# Language Learning App
+# EchoLearn
 
 ## Project Overview
 This is a language learning web application designed to help users improve their language skills through various lessons and quizzes. The application is built using Flask and includes templates for different types of lessons and quizzes.
